@@ -18,6 +18,18 @@ void app_main(void)
 void init_wifi(){
     wifi_init_config_t wifi_init_default_config = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&wifi_init_default_config));
+    //esp_wifi_set_mode();
+    wifi_config_t sta_config = {
+        .sta = {
+            .ssid = "Testi",
+            .password = "testisalasana"
+        },
+        
+
+    };
+    sta_config.sta.bssid_set = false;
+
+    //esp_wifi_connect();
 }
 
 /*
