@@ -16,5 +16,8 @@
     "idf.toolsPathWin": "C:\\Users\\penes\\.espressif",
     "idf.portWin": "COM4",
     "idf.gitPathWin": "C:\\Users\\penes\\.espressif\\tools\\idf-git\\2.39.2\\cmd\\git.exe",
-    "idf.flashType": "UART"
+    "idf.flashType": "UART",
+    "files.associations": {
+        "string.h": "c"
+    }
 }
