@@ -14,8 +14,8 @@
 
 
 #define relay GPIO_NUM_12
-#define esp_wifi_ssid "Testi"
-#define esp_wifi_pass "Testisalasana"
+#define esp_wifi_ssid "Testi" //ssid for esp
+#define esp_wifi_pass "Testisalasana" //Password for esp
 
 
 /* Our URI handler function to be called during GET /uri request */
@@ -102,7 +102,7 @@ httpd_handle_t start_webserver(void)
 
 void app_main(void)
 {   
-    
+    start_webserver();
     printf("Hello world!\n");
 
 }
