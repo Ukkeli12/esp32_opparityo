@@ -12,11 +12,26 @@
 #include "esp_log.h"
 #include "driver/gpio.h"
 
+#include "esp_check.h"
 
 #define relay GPIO_NUM_12
 #define esp_wifi_ssid "Testi" //ssid for esp
 #define esp_wifi_pass "Testisalasana" //Password for esp
 
+
+void init_and_start_wifi(){
+   /* struct wifi_init_config_t *conf {
+        wifi_osi_funcs_t = 2;
+
+    }
+
+    ESP_ERROR_CHECK(esp_wifi_init());*/
+    wifi_mode_t mode_conf = WIFI_MODE_STA; //Setting wifi mode
+    esp_wifi_get_mode(mode_conf);
+
+    esp_wifi_start();
+
+}
 
 /* Our URI handler function to be called during GET /uri request */
 esp_err_t get_handler(httpd_req_t *req)
@@ -102,7 +117,7 @@ httpd_handle_t start_webserver(void)
 
 void app_main(void)
 {   
-    start_webserver();
+
     printf("Hello world!\n");
 
 }
