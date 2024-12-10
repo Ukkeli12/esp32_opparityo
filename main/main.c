@@ -13,112 +13,62 @@
 #include "driver/gpio.h"
 
 #include "esp_check.h"
+#include "esp_mac.h"
+#include <esp_wifi_types_generic.h>
 
-#define relay GPIO_NUM_12
-#define esp_wifi_ssid "Testi" //ssid for esp
-#define esp_wifi_pass "Testisalasana" //Password for esp
+#define relay_port GPIO_NUM_12
+#define wifi_ssid "Testi" //ssid for esp wifi
+#define wifi_password "Testisalasana" //Password for esp wifi
 
 
 void init_and_start_wifi(){
-   /* struct wifi_init_config_t *conf {
-        wifi_osi_funcs_t = 2;
+    wifi_init_config_t conf = WIFI_INIT_CONFIG_DEFAULT();
 
-    }
+    wifi_country_t finland_country  = {
+        .cc = "FI",
+        .schan = 1
 
-    ESP_ERROR_CHECK(esp_wifi_init());*/
+    };
+
+    esp_wifi_init(&conf);
+    esp_wifi_set_country(&finland_country); //Setting country to Finland
+    
+
+
     wifi_mode_t mode_conf = WIFI_MODE_STA; //Setting wifi mode
-    esp_wifi_get_mode(mode_conf);
+    esp_wifi_set_mode(mode_conf);
+
+    wifi_sta_config_t sta_setting = {
+        .ssid = wifi_ssid,
+        .password = wifi_password,
+        //.threshold.authmode = WIFI_AUTH_OPEN //For open wifi
+        .threshold.authmode = WIFI_AUTH_WPA2_PSK
+
+    };
+
+    esp_wifi_set_config(WIFI_IF_STA, &sta_setting);
 
     esp_wifi_start();
+    esp_wifi_connect();
+
 
 }
 
-/* Our URI handler function to be called during GET /uri request */
-esp_err_t get_handler(httpd_req_t *req)
-{
-    /* Send a simple response */
-    const char resp[] = "URI GET Response";
-    httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
-    return ESP_OK;
-}
 
-/* Our URI handler function to be called during POST /uri request */
-esp_err_t post_handler(httpd_req_t *req)
-{
-    /* Destination buffer for content of HTTP POST request.
-     * httpd_req_recv() accepts char* only, but content could
-     * as well be any binary data (needs type casting).
-     * In case of string data, null termination will be absent, and
-     * content length would give length of string */
-    char content[100];
 
-    /* Truncate if content length larger than the buffer */
-    size_t recv_size = MIN(req->content_len, sizeof(content));
-
-    int ret = httpd_req_recv(req, content, recv_size);
-    if (ret <= 0) {  /* 0 return value indicates connection closed */
-        /* Check if timeout occurred */
-        if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
-            /* In case of timeout one can choose to retry calling
-             * httpd_req_recv(), but to keep it simple, here we
-             * respond with an HTTP 408 (Request Timeout) error */
-            httpd_resp_send_408(req);
-        }
-        /* In case of error, returning ESP_FAIL will
-         * ensure that the underlying socket is closed */
-        return ESP_FAIL;
-    }
-
-    /* Send a simple response */
-    const char resp[] = "URI POST Response";
-    httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
-    return ESP_OK;
-}
-
-/* URI handler structure for GET /uri */
-httpd_uri_t uri_get = {
-    .uri      = "/uri",
-    .method   = HTTP_GET,
-    .handler  = get_handler,
-    .user_ctx = NULL
-};
-
-/* URI handler structure for POST /uri */
-httpd_uri_t uri_post = {
-    .uri      = "/uri",
-    .method   = HTTP_POST,
-    .handler  = post_handler,
-    .user_ctx = NULL
-};
-
-static void stop_http_server(httpd_handle_t server){
-    if (server) {
-        httpd_stop(server);
-    }
-}
-
-httpd_handle_t start_webserver(void)
-{
-    /* Generate default configuration */
-    httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-
-    /* Empty handle to esp_http_server */
-    httpd_handle_t server = NULL;
-
-    /* Start the httpd server */
-    if (httpd_start(&server, &config) == ESP_OK) {
-        /* Register URI handlers */
-        httpd_register_uri_handler(server, &uri_get);
-        httpd_register_uri_handler(server, &uri_post);
-    }
-    /* If server failed to start, handle will be NULL */
-    return server;
-}
 
 void app_main(void)
 {   
 
-    printf("Hello world!\n");
+    init_and_start_wifi();
+
+    while(1){
+
+
+        gpio_set_level(relay_port, 1); //Putting relay on
+
+    }
+    
 
 }
 
