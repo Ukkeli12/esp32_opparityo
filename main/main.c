@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include "esp_wifi.h" //Esp wifi library
+#include "esp_https_server.h" //https server library for esp32
 #include "esp_http_server.h" //http server library for esp32
 #include <string.h>
 #include "freertos/FreeRTOS.h"
@@ -22,34 +23,45 @@
 
 
 void init_and_start_wifi(){
-    wifi_init_config_t conf = WIFI_INIT_CONFIG_DEFAULT();
+    nvs_flash_init();
 
-    wifi_country_t finland_country  = {
-        .cc = "FI",
-        .schan = 1
+    esp_wifi_stop();
+    esp_wifi_deinit();
 
-    };
-
-    esp_wifi_init(&conf);
-    esp_wifi_set_country(&finland_country); //Setting country to Finland
+    esp_err_t ret;
     
+    wifi_init_config_t conf = WIFI_INIT_CONFIG_DEFAULT();
+    ret = esp_wifi_init(&conf);
+    ESP_ERROR_CHECK(ret);
+
+    /*wifi_country_t finland_country  = {
+        .cc = "FI" ,
+        .schan = 1
+        
+    };
+    esp_wifi_set_country(&finland_country); //Setting country to Finland
+    */
 
 
     wifi_mode_t mode_conf = WIFI_MODE_STA; //Setting wifi mode
-    esp_wifi_set_mode(mode_conf);
+    ret = esp_wifi_set_mode(mode_conf);
+    ESP_ERROR_CHECK(ret);
 
-    wifi_sta_config_t sta_setting = {
-        .ssid = wifi_ssid,
-        .password = wifi_password,
-        //.threshold.authmode = WIFI_AUTH_OPEN //For open wifi
-        .threshold.authmode = WIFI_AUTH_WPA2_PSK
+
+    wifi_config_t wifi_config_settings = {
+        .sta = {
+            .ssid = wifi_ssid,
+            .password = wifi_password,
+        }
 
     };
 
-    esp_wifi_set_config(WIFI_IF_STA, &sta_setting);
+    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config_settings));
 
-    esp_wifi_start();
-    esp_wifi_connect();
+
+    ESP_ERROR_CHECK(esp_wifi_start());
+    ESP_ERROR_CHECK(esp_wifi_connect());
+    ESP_ERROR_CHECK(ret);
 
 
 }
@@ -64,11 +76,9 @@ void app_main(void)
 
     while(1){
 
-
         gpio_set_level(relay_port, 1); //Putting relay on
 
-    }
-    
+    }     
 
 }
 
