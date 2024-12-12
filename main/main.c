@@ -24,6 +24,9 @@
 
 void init_and_start_wifi(){
     nvs_flash_init();
+    esp_netif_init();
+    esp_event_loop_create_default();
+    esp_netif_create_default_wifi_sta();
 
     esp_wifi_stop();
     esp_wifi_deinit();
