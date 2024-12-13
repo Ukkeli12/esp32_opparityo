@@ -21,6 +21,23 @@
 #define wifi_ssid "Testi" //ssid for esp wifi
 #define wifi_password "Testisalasana" //Password for esp wifi
 
+//HTTP STARTS
+esp_err_t root_get_handler(httpd_req_t *req) {
+    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1></body></html>";
+    httpd_resp_send(req, response, HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
+
+void register_uri_handlers(httpd_handle_t server) {
+    httpd_uri_t root_uri = {
+        .uri = "/",
+        .method = HTTP_GET,
+        .handler = root_get_handler,
+        .user_ctx = NULL
+    };
+    httpd_register_uri_handler(server, &root_uri);
+}
+//HTTP ENDS
 
 void init_and_start_wifi(){
     nvs_flash_init();
