@@ -94,6 +94,13 @@ void app_main(void)
 
     init_and_start_wifi();
 
+    //Start webserver begin
+    httpd_handle_t server = start_webserver();
+    if (server) {
+        register_uri_handlers(server);
+    }
+    //End webserver begin
+
     while(1){
 
         gpio_set_level(relay_port, 1); //Putting relay on
