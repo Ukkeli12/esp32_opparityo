@@ -16,14 +16,17 @@
 #include "esp_check.h"
 #include "esp_mac.h"
 #include <esp_wifi_types_generic.h>
+#include "esp_http_server.h"
+#include "esp_task_wdt.h"
+
 
 #define relay_port GPIO_NUM_12
 #define wifi_ssid "Testi" //ssid for esp wifi
-#define wifi_password "Testisalasana" //Password for esp wifi
+#define wifi_password "Testiverkko" //Password for esp wifi
 
 //HTTP STARTS
 esp_err_t root_get_handler(httpd_req_t *req) {
-    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1></body></html>";
+    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><button type="button">ON</button><button type="button">OFF</button></body></html>";
     httpd_resp_send(req, response, HTTPD_RESP_USE_STRLEN);
     return ESP_OK;
 }
@@ -37,6 +40,17 @@ void register_uri_handlers(httpd_handle_t server) {
     };
     httpd_register_uri_handler(server, &root_uri);
 }
+
+
+static httpd_handle_t start_webserver(void) {
+    httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+    httpd_handle_t server = NULL;
+    if (httpd_start(&server, &config) == ESP_OK) {
+        return server;
+    }
+    return NULL;
+}
+
 //HTTP ENDS
 
 void init_and_start_wifi(){
@@ -45,14 +59,13 @@ void init_and_start_wifi(){
     esp_event_loop_create_default();
     esp_netif_create_default_wifi_sta();
 
-    esp_wifi_stop();
+    /*esp_wifi_stop();
     esp_wifi_deinit();
-
-    esp_err_t ret;
+    */
     
     wifi_init_config_t conf = WIFI_INIT_CONFIG_DEFAULT();
-    ret = esp_wifi_init(&conf);
-    ESP_ERROR_CHECK(ret);
+    esp_wifi_init(&conf);
+
 
     /*wifi_country_t finland_country  = {
         .cc = "FI" ,
@@ -64,8 +77,7 @@ void init_and_start_wifi(){
 
 
     wifi_mode_t mode_conf = WIFI_MODE_STA; //Setting wifi mode
-    ret = esp_wifi_set_mode(mode_conf);
-    ESP_ERROR_CHECK(ret);
+    esp_wifi_set_mode(mode_conf);
 
 
     wifi_config_t wifi_config_settings = {
@@ -76,12 +88,12 @@ void init_and_start_wifi(){
 
     };
 
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config_settings));
+    esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config_settings);
 
 
-    ESP_ERROR_CHECK(esp_wifi_start());
-    ESP_ERROR_CHECK(esp_wifi_connect());
-    ESP_ERROR_CHECK(ret);
+    esp_wifi_start();
+    esp_wifi_connect();
+
 
 
 }
@@ -101,11 +113,11 @@ void app_main(void)
     }
     //End webserver begin
 
-    while(1){
-
+    /*while(1){
+        //esp_task_wdt_reset();
         gpio_set_level(relay_port, 1); //Putting relay on
 
-    }     
+    }     */
 
 }
 
