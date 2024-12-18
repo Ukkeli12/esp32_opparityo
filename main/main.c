@@ -26,7 +26,8 @@
 
 //HTTP STARTS
 esp_err_t root_get_handler(httpd_req_t *req) {
-    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><button type="button">ON</button><button type="button">OFF</button></body></html>";
+    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><button type=\"button\">ON</button><button type=\"button\">OFF</button></body></html>";
+
     httpd_resp_send(req, response, HTTPD_RESP_USE_STRLEN);
     return ESP_OK;
 }
