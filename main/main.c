@@ -24,6 +24,17 @@
 #define wifi_ssid "Testi" //ssid for esp wifi
 #define wifi_password "Testiverkko" //Password for esp wifi
 
+
+//Login html starts
+static const char *TAG = "LoginServer";
+
+// Define credentials
+const char *valid_username = "admin";
+const char *valid_password = "password";
+//Login html stops 
+
+
+
 //HTTP STARTS
 esp_err_t root_get_handler(httpd_req_t *req) {
     const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><button type=\"button\">ON</button><button type=\"button\">OFF</button></body></html>";
@@ -49,6 +60,30 @@ static httpd_handle_t start_webserver(void) {
     if (httpd_start(&server, &config) == ESP_OK) {
         return server;
     }
+
+
+    httpd_handle_t server = NULL;
+    if (httpd_start(&server, &config) == ESP_OK) {
+        // Register URI handlers
+        httpd_uri_t login_page = {
+            .uri       = "/",
+            .method    = HTTP_GET,
+            .handler   = login_page_handler,
+            .user_ctx  = NULL
+        };
+        httpd_register_uri_handler(server, &login_page);
+
+
+        httpd_uri_t login_post = {
+            .uri       = "/login",
+            .method    = HTTP_POST,
+            .handler   = login_handler,
+            .user_ctx  = NULL
+        };
+        httpd_register_uri_handler(server, &login_post);
+    }
+
+
     return NULL;
 }
 
