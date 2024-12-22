@@ -33,7 +33,26 @@ const char *valid_username = "admin";
 const char *valid_password = "password";
 //Login html stops 
 
-
+esp_err_t login_page_handler(httpd_req_t *req) {
+    const char *html_response = 
+        "<!DOCTYPE html>"
+        "<html>"
+        "<head><title>Login</title></head>"
+        "<body>"
+        "<h2>ESP32 Login</h2>"
+        "<form action=\"/login\" method=\"POST\">"
+        "<label for=\"username\">Username:</label><br>"
+        "<input type=\"text\" id=\"username\" name=\"username\"><br><br>"
+        "<label for=\"password\">Password:</label><br>"
+        "<input type=\"password\" id=\"password\" name=\"password\"><br><br>"
+        "<input type=\"submit\" value=\"Login\">"
+        "</form>"
+        "</body>"
+        "</html>";
+    
+    httpd_resp_send(req, html_response, HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
 
 //HTTP STARTS
 esp_err_t root_get_handler(httpd_req_t *req) {
