@@ -24,6 +24,7 @@
 #define wifi_ssid "Testi" //ssid for esp wifi
 #define wifi_password "Testiverkko" //Password for esp wifi
 
+//#define koulu_setup
 
 //Login html starts
 static const char *TAG = "LoginServer";
@@ -114,9 +115,6 @@ void init_and_start_wifi(){
     esp_event_loop_create_default();
     esp_netif_create_default_wifi_sta();
 
-    /*esp_wifi_stop();
-    esp_wifi_deinit();
-    */
     
     wifi_init_config_t conf = WIFI_INIT_CONFIG_DEFAULT();
     esp_wifi_init(&conf);
@@ -137,8 +135,13 @@ void init_and_start_wifi(){
 
     wifi_config_t wifi_config_settings = {
         .sta = {
+            
+            #if koulu_setup //Setting schools network
+            .ssid = "Panoulu",
+            #else
             .ssid = wifi_ssid,
             .password = wifi_password,
+            #endif
         }
 
     };
@@ -159,7 +162,7 @@ void init_and_start_wifi(){
 void app_main(void)
 {   
 
-    init_and_start_wifi();
+    init_and_start_wifi(); //Starting wifi
 
     //Start webserver begin
     httpd_handle_t server = start_webserver();
