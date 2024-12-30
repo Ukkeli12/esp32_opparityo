@@ -16,7 +16,6 @@
 #include "esp_check.h"
 #include "esp_mac.h"
 #include <esp_wifi_types_generic.h>
-#include "esp_http_server.h"
 #include "esp_task_wdt.h"
 
 
@@ -24,7 +23,10 @@
 #define wifi_ssid "Testi" //ssid for esp wifi
 #define wifi_password "Testiverkko" //Password for esp wifi
 
-//#define koulu_setup
+//#define koulu_setup //school wifi setup
+
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 
 //Login html starts
 static const char *TAG = "LoginServer";
@@ -56,6 +58,44 @@ esp_err_t login_page_handler(httpd_req_t *req) {
 }
 
 //HTTP STARTS
+
+
+// Handle login form submission
+esp_err_t login_handler(httpd_req_t *req) {
+    char buf[100];
+    int ret, remaining = req->content_len;
+
+    char username[50] = {0};
+    char password[50] = {0};
+
+    // Parse the form data
+    while (remaining > 0) {
+        ret = httpd_req_recv(req, buf, MIN(remaining, sizeof(buf)));
+        if (ret <= 0) {
+            ESP_LOGE(TAG, "Error receiving data");
+            httpd_resp_send_500(req);
+            return ESP_FAIL;
+        }
+        buf[ret] = '\0';
+        remaining -= ret;
+    }
+
+    // Extract username and password from the form data
+    sscanf(buf, "username=%[^&]&password=%s", username, password);
+    ESP_LOGI(TAG, "Received username: %s, password: %s", username, password);
+
+    // Check credentials
+    if (strcmp(username, valid_username) == 0 && strcmp(password, valid_password) == 0) {
+        const char *success_response = "Login successful!";
+        httpd_resp_send(req, success_response, HTTPD_RESP_USE_STRLEN);
+    } else {
+        const char *failure_response = "Invalid credentials. Please try again.";
+        httpd_resp_send(req, failure_response, HTTPD_RESP_USE_STRLEN);
+    }
+    return ESP_OK;
+}
+
+
 esp_err_t root_get_handler(httpd_req_t *req) {
     const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><button type=\"button\">ON</button><button type=\"button\">OFF</button></body></html>";
 
@@ -82,7 +122,6 @@ static httpd_handle_t start_webserver(void) {
     }
 
 
-    httpd_handle_t server = NULL;
     if (httpd_start(&server, &config) == ESP_OK) {
         // Register URI handlers
         httpd_uri_t login_page = {
@@ -104,7 +143,7 @@ static httpd_handle_t start_webserver(void) {
     }
 
 
-    return NULL;
+    return server;
 }
 
 //HTTP ENDS
