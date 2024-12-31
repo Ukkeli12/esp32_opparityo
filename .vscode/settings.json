@@ -19,6 +19,8 @@
     "idf.flashType": "UART",
     "files.associations": {
         "string.h": "c",
-        "esp_wifi_types_generic.h": "c"
+        "esp_wifi_types_generic.h": "c",
+        "random": "c",
+        "esp_task_wdt.h": "c"
     }
 }
