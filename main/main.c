@@ -20,13 +20,13 @@
 #include "mbedtls/base64.h"
 
 #define relay_port GPIO_NUM_12 //Port of reley that used in program
-#define wifi_ssid "Testi" //ssid for esp wifi
-#define wifi_password "Testiverkko" //Password for esp wifi
+#define wifi_ssid "Jotakin" //ssid for esp wifi
+#define wifi_password "ToomiHan0" //Password for esp wifi
 
 //#define school_setup //school wifi setup
 
 //HTTP login starts
-const char *username = "user12";
+const char *username = "user";
 const char *password = "password";
 
 
@@ -64,14 +64,11 @@ esp_err_t root_get_handler(httpd_req_t *req) {
     if (httpd_req_get_hdr_value_str(req, "Authorization", auth_value, sizeof(auth_value)) == ESP_OK) {
         if (strcmp(auth_value, expected_auth) == 0) {
             // Authorized
-            httpd_resp_send(req, "Authorized", HTTPD_RESP_USE_STRLEN);
+            httpd_resp_send(req, response, HTTPD_RESP_USE_STRLEN);
             return ESP_OK;
         }
     }
 
-
-    httpd_resp_send(req, response, HTTPD_RESP_USE_STRLEN);
-    return ESP_OK;
 
     // Unauthorized
     httpd_resp_set_status(req, "401 Unauthorized");
