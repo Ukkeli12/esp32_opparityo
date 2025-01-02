@@ -88,6 +88,38 @@ void register_uri_handlers(httpd_handle_t server) {
 }
 
 
+//LED handler starts
+esp_err_t led_get_handler(httpd_req_t *req) {
+    char* buf;
+    size_t buf_len = httpd_req_get_url_query_len(req) + 1;
+
+    if (buf_len > 1) {
+        buf = malloc(buf_len);
+        httpd_req_get_url_query_str(req, buf, buf_len);
+
+        char param[32];
+        if (httpd_query_key_value(buf, "state", param, sizeof(param)) == ESP_OK) {
+            ESP_LOGI(TAG, "LED state: %s", param);
+
+            if (strcmp(param, "on") == 0) {
+                gpio_set_level(relay_port, 1); // Turn ON LED
+            } else if (strcmp(param, "off") == 0) {
+                gpio_set_level(relay_port, 0); // Turn OFF LED
+            }
+        }
+        free(buf);
+    }
+
+    httpd_resp_send(req, "OK", strlen("OK"));
+    return ESP_OK;
+}
+
+//LED handler ends
+
+
+
+
+
 static httpd_handle_t start_webserver(void) {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     httpd_handle_t server = NULL;
