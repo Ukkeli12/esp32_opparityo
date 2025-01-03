@@ -127,6 +127,18 @@ static httpd_handle_t start_webserver(void) {
         return server;
     }
         return NULL;
+
+    httpd_uri_t led_uri = {
+            .uri = "/led",
+            .method = HTTP_GET,
+            .handler = led_get_handler,
+            .user_ctx = NULL
+        };
+        httpd_register_uri_handler(server, &led_uri);
+
+
+
+
 }
 
 
