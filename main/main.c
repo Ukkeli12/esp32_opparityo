@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <inttypes.h>
 #include "esp_wifi.h" //Esp wifi library
@@ -19,7 +18,7 @@
 #include "esp_task_wdt.h"
 #include "mbedtls/base64.h"
 
-#define relay_port GPIO_NUM_12 //Port of reley that used in program
+#define relay_port GPIO_NUM_32 //Port of reley that used in program
 #define wifi_ssid "Jotakin" //ssid for esp wifi
 #define wifi_password "ToomiHan0" //Password for esp wifi
 
@@ -29,6 +28,8 @@
 const char *username = "user";
 const char *password = "password";
 
+
+static const char *TAG = "LED_Control";
 
 void generate_base64_auth(char *out_buf, size_t out_buf_len) {
     char auth_str[128];
@@ -46,7 +47,6 @@ void generate_base64_auth(char *out_buf, size_t out_buf_len) {
 void initialize_led(){ //Setting led to work
     gpio_reset_pin(relay_port);
     gpio_set_direction(relay_port, GPIO_MODE_OUTPUT);
-
     gpio_set_level(relay_port, 0); //Putting relay off
 }
 
@@ -54,7 +54,15 @@ void initialize_led(){ //Setting led to work
 
 
 esp_err_t root_get_handler(httpd_req_t *req) {
-    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><button type=\"button\">ON</button><button type=\"button\">OFF</button></body></html>";
+    const char *response = "<!DOCTYPE html>"
+                            "<html>"
+                            "<body>"
+                            "<h1>ESP32 Web Server</h1>"
+                            "<p>Petterin verkkosivusto</p>"
+                            "<button onclick=\"fetch('/led?state=on')\">Turn ON</button>"
+                            "<button onclick=\"fetch('/led?state=off')\">Turn OFF</button>"
+                            "</body>"
+                            "</html>";
 
     const char *expected_auth = "Basic dXNlcjpwYXNzd29yZA=="; // Base64 of "user:password"
 
@@ -123,10 +131,20 @@ esp_err_t led_get_handler(httpd_req_t *req) {
 static httpd_handle_t start_webserver(void) {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     httpd_handle_t server = NULL;
-    if (httpd_start(&server, &config) == ESP_OK) {
+    /*if (httpd_start(&server, &config) == ESP_OK) {
         return server;
     }
         return NULL;
+        */
+
+    if (httpd_start(&server, &config) == ESP_OK) {
+        httpd_uri_t root_uri = {
+            .uri = "/",
+            .method = HTTP_GET,
+            .handler = root_get_handler,
+            .user_ctx = NULL
+        };
+        httpd_register_uri_handler(server, &root_uri);
 
     httpd_uri_t led_uri = {
             .uri = "/led",
@@ -135,15 +153,24 @@ static httpd_handle_t start_webserver(void) {
             .user_ctx = NULL
         };
         httpd_register_uri_handler(server, &led_uri);
-
-
-
-
+    }
+    return server;
 }
 
 
 //HTTP ENDS
-
+// Wi-Fi event handler starts
+static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+    if (event_id == WIFI_EVENT_STA_START) {
+        esp_wifi_connect();
+    } else if (event_id == WIFI_EVENT_STA_DISCONNECTED) {
+        esp_wifi_connect();
+    } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
+        esp_netif_ip_info_t* ip_info = (esp_netif_ip_info_t*)event_data;
+        ESP_LOGI(TAG, "Got IP: " IPSTR, IP2STR(&ip_info->ip));
+    }
+}
+// Wi-Fi event handler ends
 
 
 
@@ -152,15 +179,15 @@ void init_and_start_wifi(){
     esp_netif_init();
     esp_event_loop_create_default();
     esp_netif_create_default_wifi_sta();
-
+   
     
     wifi_init_config_t conf = WIFI_INIT_CONFIG_DEFAULT();
     esp_wifi_init(&conf);
 
-
-
-    
-
+        esp_event_handler_instance_t instance_any_id;
+    esp_event_handler_instance_t instance_got_ip;
+    esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, &instance_any_id);
+    esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL, &instance_got_ip);
 
     wifi_config_t wifi_config_settings = {
         .sta = {
@@ -191,9 +218,9 @@ void init_and_start_wifi(){
 
 void app_main(void)
 {   
-
+    initialize_led(); //Initalize leds
     init_and_start_wifi(); //Starting wifi
-
+    
     //Start webserver begin
     httpd_handle_t server = start_webserver();
     if (server) {
