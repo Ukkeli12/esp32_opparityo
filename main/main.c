@@ -19,10 +19,10 @@
 #include "mbedtls/base64.h"
 
 #define relay_port GPIO_NUM_32 //Port of reley that used in program
-#define wifi_ssid "Jotakin" //ssid for esp wifi
-#define wifi_password "ToomiHan0" //Password for esp wifi
+#define wifi_ssid "Testi" //ssid for esp wifi
+#define wifi_password "Testiverkko" //Password for esp wifi
 
-//#define school_setup //school wifi setup
+#define school_setup //school wifi setup
 
 //HTTP login starts
 const char *username = "user";
@@ -54,15 +54,7 @@ void initialize_led(){ //Setting led to work
 
 
 esp_err_t root_get_handler(httpd_req_t *req) {
-    const char *response = "<!DOCTYPE html>"
-                            "<html>"
-                            "<body>"
-                            "<h1>ESP32 Web Server</h1>"
-                            "<p>Petterin verkkosivusto</p>"
-                            "<button onclick=\"fetch('/led?state=on')\">Turn ON</button>"
-                            "<button onclick=\"fetch('/led?state=off')\">Turn OFF</button>"
-                            "</body>"
-                            "</html>";
+    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><button onclick=\"fetch('/led?state=on')\">Turn ON</button><button onclick=\"fetch('/led?state=off')\">Turn OFF</button></body></html>";
 
     const char *expected_auth = "Basic dXNlcjpwYXNzd29yZA=="; // Base64 of "user:password"
 
@@ -94,7 +86,7 @@ void register_uri_handlers(httpd_handle_t server) {
     };
     httpd_register_uri_handler(server, &root_uri);
 }
-
+ //Put this on if it not working
 
 //LED handler starts
 esp_err_t led_get_handler(httpd_req_t *req) {
@@ -184,7 +176,7 @@ void init_and_start_wifi(){
     wifi_init_config_t conf = WIFI_INIT_CONFIG_DEFAULT();
     esp_wifi_init(&conf);
 
-        esp_event_handler_instance_t instance_any_id;
+    esp_event_handler_instance_t instance_any_id;
     esp_event_handler_instance_t instance_got_ip;
     esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, &instance_any_id);
     esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL, &instance_got_ip);
@@ -192,8 +184,9 @@ void init_and_start_wifi(){
     wifi_config_t wifi_config_settings = {
         .sta = {
             
-            #if school_setup //Setting schools network
-            .ssid = "Panoulu",
+            #ifdef school_setup //Setting schools network
+            .ssid = "Jotakin",
+            .password = "ToomiHan0",
             #else
             .ssid = wifi_ssid,
             .password = wifi_password,
@@ -208,9 +201,6 @@ void init_and_start_wifi(){
 
     esp_wifi_start();
     esp_wifi_connect();
-
-
-
 }
 
 
