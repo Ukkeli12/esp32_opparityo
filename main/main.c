@@ -53,8 +53,27 @@ void initialize_led(){ //Setting led to work
 //HTTP STARTS
 
 
+//On off handlers
+
+/*
+esp_err_t on_handler(httpd_req_t *req) {
+    device_status = true;
+    httpd_resp_send(req, "Device ON", HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
+
+esp_err_t off_handler(httpd_req_t *req) {
+    device_status = false;
+    httpd_resp_send(req, "Device OFF", HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
+*/
+
+//On off handlers ends
+ 
+
 esp_err_t root_get_handler(httpd_req_t *req) {
-    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><button onclick=\"fetch('/led?state=on')\">Turn ON</button><button onclick=\"fetch('/led?state=off')\">Turn OFF</button></body></html>";
+    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><p>Status</p><p>OFF</p><button onclick=\"fetch('/led?state=on')\">Turn ON</button><button onclick=\"fetch('/led?state=off')\">Turn OFF</button></body></html>";
 
     const char *expected_auth = "Basic dXNlcjpwYXNzd29yZA=="; // Base64 of "user:password"
 
