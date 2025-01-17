@@ -67,6 +67,14 @@ esp_err_t off_handler(httpd_req_t *req) {
     httpd_resp_send(req, "Device OFF", HTTPD_RESP_USE_STRLEN);
     return ESP_OK;
 }
+
+esp_err_t status_handler(httpd_req_t *req) {
+    const char *status = device_status ? "ON" : "OFF";
+    httpd_resp_send(req, status, HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
+
+
 */
 
 //On off handlers ends
