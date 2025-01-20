@@ -24,6 +24,10 @@
 
 #define school_setup //school wifi setup
 
+//Device defaut status
+bool device_status = false;  // OFF by default
+
+
 //HTTP login starts
 const char *username = "user";
 const char *password = "password";
@@ -50,21 +54,27 @@ void initialize_led(){ //Setting led to work
     gpio_set_level(relay_port, 0); //Putting relay off
 }
 
+void control_device() {
+    gpio_set_level(relay_port, device_status ? 1 : 0);
+}
+
 //HTTP STARTS
 
 
 //On off handlers
 
-/*
+
 esp_err_t on_handler(httpd_req_t *req) {
     device_status = true;
     httpd_resp_send(req, "Device ON", HTTPD_RESP_USE_STRLEN);
+    gpio_set_level(relay_port, 1);
     return ESP_OK;
 }
 
 esp_err_t off_handler(httpd_req_t *req) {
     device_status = false;
     httpd_resp_send(req, "Device OFF", HTTPD_RESP_USE_STRLEN);
+    gpio_set_level(relay_port, 0);
     return ESP_OK;
 }
 
@@ -75,13 +85,21 @@ esp_err_t status_handler(httpd_req_t *req) {
 }
 
 
-*/
-
 //On off handlers ends
  
 
 esp_err_t root_get_handler(httpd_req_t *req) {
-    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><p>Status</p><p>OFF</p><button onclick=\"fetch('/led?state=on')\">Turn ON</button><button onclick=\"fetch('/led?state=off')\">Turn OFF</button></body></html>";
+    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><button onclick=\"fetch('/led?state=on')\">Turn ON</button><button onclick=\"fetch('/led?state=off')\">Turn OFF</button>"
+    
+    "<p>Status: <span id=\"status\">Unknown</span></p>"
+    "<script>"
+        "setInterval(() => {"
+            "fetch('/status')"
+                ".then(response => response.text())"
+                ".then(status => document.getElementById('status').innerText = status);"
+        "}, 1000);"
+    "</script>"
+    "</body></html>";
 
     const char *expected_auth = "Basic dXNlcjpwYXNzd29yZA=="; // Base64 of "user:password"
 
@@ -129,8 +147,10 @@ esp_err_t led_get_handler(httpd_req_t *req) {
             ESP_LOGI(TAG, "LED state: %s", param);
 
             if (strcmp(param, "on") == 0) {
+                device_status = true;
                 gpio_set_level(relay_port, 1); // Turn ON LED
             } else if (strcmp(param, "off") == 0) {
+                device_status = false;
                 gpio_set_level(relay_port, 0); // Turn OFF LED
             }
         }
@@ -173,6 +193,15 @@ static httpd_handle_t start_webserver(void) {
         };
         httpd_register_uri_handler(server, &led_uri);
     }
+
+    httpd_uri_t on_uri = { .uri = "/on", .method = HTTP_GET, .handler = on_handler };
+    httpd_uri_t off_uri = { .uri = "/off", .method = HTTP_GET, .handler = off_handler };
+    httpd_uri_t status_uri = { .uri = "/status", .method = HTTP_GET, .handler = status_handler };
+
+    httpd_register_uri_handler(server, &on_uri);
+    httpd_register_uri_handler(server, &off_uri);
+    httpd_register_uri_handler(server, &status_uri);
+
     return server;
 }
 
