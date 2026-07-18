@@ -20,8 +20,8 @@
 #include "mbedtls/base64.h"
 
 #define relay_port GPIO_NUM_12 //Port of reley that used in program
-#define wifi_ssid "Jotakin" //ssid for esp wifi
-#define wifi_password "ToomiHan0" //Password for esp wifi
+#define wifi_ssid "test" //ssid for esp wifi
+#define wifi_password "test" //Password for esp wifi
 
 //#define school_setup //school wifi setup
 
