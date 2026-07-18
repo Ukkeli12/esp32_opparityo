@@ -241,8 +241,8 @@ void init_and_start_wifi(){
         .sta = {
             
             #ifdef school_setup //Setting schools network
-            .ssid = "Jotakin",
-            .password = "ToomiHan0",
+            .ssid = "test",
+            .password = "test",
             #else
             .ssid = wifi_ssid,
             .password = wifi_password,
