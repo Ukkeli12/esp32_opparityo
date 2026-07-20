@@ -1,28 +1,36 @@
 {
-    "C_Cpp.intelliSenseEngine": "default",
-    "idf.adapterTargetName": "esp32",
-    "idf.customExtraPaths": "D:\\.espressif\\tools\\xtensa-esp-elf-gdb\\14.2_20240403\\xtensa-esp-elf-gdb\\bin;D:\\.espressif\\tools\\riscv32-esp-elf-gdb\\14.2_20240403\\riscv32-esp-elf-gdb\\bin;D:\\.espressif\\tools\\xtensa-esp-elf\\esp-13.2.0_20240530\\xtensa-esp-elf\\bin;D:\\.espressif\\tools\\riscv32-esp-elf\\esp-13.2.0_20240530\\riscv32-esp-elf\\bin;D:\\.espressif\\tools\\esp32ulp-elf\\2.38_20240113\\esp32ulp-elf\\bin;D:\\.espressif\\tools\\cmake\\3.30.2\\bin;D:\\.espressif\\tools\\openocd-esp32\\v0.12.0-esp32-20241016\\openocd-esp32\\bin;D:\\.espressif\\tools\\ninja\\1.12.1;D:\\.espressif\\tools\\idf-exe\\1.0.3;D:\\.espressif\\tools\\ccache\\4.10.2\\ccache-4.10.2-windows-x86_64;D:\\.espressif\\tools\\dfu-util\\0.11\\dfu-util-0.11-win64;D:\\.espressif\\tools\\esp-rom-elfs\\20240305",
-    "idf.customExtraVars": {
-        "OPENOCD_SCRIPTS": "D:\\.espressif\\tools\\openocd-esp32\\v0.12.0-esp32-20241016/openocd-esp32/share/openocd/scripts",
-        "IDF_CCACHE_ENABLE": "1",
-        "ESP_ROM_ELF_DIR": "D:\\.espressif\\tools\\esp-rom-elfs\\20240305/"
-    },
-    "idf.espIdfPathWin": "C:\\Users\\penes\\esp\\v5.4\\esp-idf",
-    "idf.openOcdConfigs": [
-        "interface/ftdi/esp32_devkitj_v1.cfg",
-        "target/esp32.cfg"
-    ],
-    "idf.pythonBinPathWin": "D:\\.espressif\\python_env\\idf5.3_py3.11_env\\Scripts\\python.exe",
-    "idf.toolsPathWin": "C:\\Users\\penes\\.espressif",
-    "idf.portWin": "COM4",
-    "idf.gitPathWin": "D:\\.espressif\\tools\\idf-git\\2.39.2\\cmd\\git.exe",
-    "idf.flashType": "UART",
-    "files.associations": {
-        "string.h": "c",
-        "esp_wifi_types_generic.h": "c",
-        "random": "c",
-        "esp_task_wdt.h": "c",
-        "esp_https_server.h": "c",
-        "esp_http_server.h": "c"
-    }
+  "C_Cpp.intelliSenseEngine": "default",
+  "idf.adapterTargetName": "esp32",
+  "idf.customExtraPaths": "D:\\.espressif\\tools\\xtensa-esp-elf-gdb\\14.2_20240403\\xtensa-esp-elf-gdb\\bin;D:\\.espressif\\tools\\riscv32-esp-elf-gdb\\14.2_20240403\\riscv32-esp-elf-gdb\\bin;D:\\.espressif\\tools\\xtensa-esp-elf\\esp-13.2.0_20240530\\xtensa-esp-elf\\bin;D:\\.espressif\\tools\\riscv32-esp-elf\\esp-13.2.0_20240530\\riscv32-esp-elf\\bin;D:\\.espressif\\tools\\esp32ulp-elf\\2.38_20240113\\esp32ulp-elf\\bin;D:\\.espressif\\tools\\cmake\\3.30.2\\bin;D:\\.espressif\\tools\\openocd-esp32\\v0.12.0-esp32-20241016\\openocd-esp32\\bin;D:\\.espressif\\tools\\ninja\\1.12.1;D:\\.espressif\\tools\\idf-exe\\1.0.3;D:\\.espressif\\tools\\ccache\\4.10.2\\ccache-4.10.2-windows-x86_64;D:\\.espressif\\tools\\dfu-util\\0.11\\dfu-util-0.11-win64;D:\\.espressif\\tools\\esp-rom-elfs\\20240305",
+  "idf.customExtraVars": {
+    "OPENOCD_SCRIPTS": "D:\\.espressif\\tools\\openocd-esp32\\v0.12.0-esp32-20241016/openocd-esp32/share/openocd/scripts",
+    "IDF_CCACHE_ENABLE": "1",
+    "ESP_ROM_ELF_DIR": "D:\\.espressif\\tools\\esp-rom-elfs\\20240305/",
+    "IDF_TARGET": "esp32"
+  },
+  "idf.espIdfPathWin": "C:\\Users\\penes\\esp\\v5.4\\esp-idf",
+  "idf.openOcdConfigs": [
+    "interface/ftdi/esp_ftdi.cfg",
+    "target/esp32.cfg"
+  ],
+  "idf.pythonBinPathWin": "D:\\.espressif\\python_env\\idf5.3_py3.11_env\\Scripts\\python.exe",
+  "idf.toolsPathWin": "C:\\Users\\penes\\.espressif",
+  "idf.portWin": "COM3",
+  "idf.gitPathWin": "D:\\.espressif\\tools\\idf-git\\2.39.2\\cmd\\git.exe",
+  "idf.flashType": "UART",
+  "files.associations": {
+    "string.h": "c",
+    "esp_wifi_types_generic.h": "c",
+    "random": "c",
+    "esp_task_wdt.h": "c",
+    "esp_https_server.h": "c",
+    "esp_http_server.h": "c"
+  },
+  "idf.currentSetup": "C:\\esp\\v6.0.2\\esp-idf",
+  "clangd.path": "C:\\Espressif\\tools\\esp-clang\\esp-19.1.2_20250312\\esp-clang\\bin\\clangd.exe",
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=**",
+    "--compile-commands-dir=c:\\Github_kloonit\\esp32_opparityo\\build"
+  ]
 }

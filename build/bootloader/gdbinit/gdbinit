@@ -1,0 +1,2 @@
+source C:/Github_kloonit/esp32_opparityo/build/bootloader/gdbinit/symbols
+source C:/Github_kloonit/esp32_opparityo/build/bootloader/gdbinit/connect

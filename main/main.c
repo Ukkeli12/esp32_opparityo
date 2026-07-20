@@ -19,8 +19,8 @@
 #include "mbedtls/base64.h"
 
 #define relay_port GPIO_NUM_32 //Port of reley that used in program
-#define wifi_ssid "Testi" //ssid for esp wifi
-#define wifi_password "Testiverkko" //Password for esp wifi
+#define wifi_ssid "Jotakin" //ssid for esp wifi
+#define wifi_password "ToomiHan0" //Password for esp wifi
 
 #define school_setup //school wifi setup
 
@@ -89,8 +89,13 @@ esp_err_t status_handler(httpd_req_t *req) {
  
 
 esp_err_t root_get_handler(httpd_req_t *req) {
-    const char *response = "<!DOCTYPE html><html><body><h1>ESP32 Web Server</h1><p>Petterin verkkosivusto</p><button onclick=\"fetch('/led?state=on')\">Turn ON</button><button onclick=\"fetch('/led?state=off')\">Turn OFF</button>"
-    
+    const char *response = "<!DOCTYPE html>"
+    "<html>"
+    "<title>Oppari sivusto</title>"
+    "<body>"
+    "<h1>Opinnaytetyo sivusto esp32</h1>"
+    "<p>Petterin verkkosivusto</p>"
+    "<button onclick=\"fetch('/led?state=on')\">Turn ON</button><button onclick=\"fetch('/led?state=off')\">Turn OFF</button>"
     "<p>Status: <span id=\"status\">Unknown</span></p>"
     "<script>"
         "setInterval(() => {"
@@ -101,8 +106,23 @@ esp_err_t root_get_handler(httpd_req_t *req) {
     "</script>"
     "</body></html>";
 
-    const char *expected_auth = "Basic dXNlcjpwYXNzd29yZA=="; // Base64 of "user:password"
 
+    char input_data[64];
+
+    snprintf(input_data, sizeof(input_data), "%s:%s", username, password);
+
+
+    unsigned char output[64];
+    size_t outlen;
+
+    mbedtls_base64_encode(output, 64, &outlen, (const unsigned char *)input_data, strlen(input_data));
+
+    char expected_auth[80];
+
+    snprintf(expected_auth, sizeof(expected_auth), "Basic %s", (char *)output);
+
+
+    
 
     // Retrieve Authorization header
     char auth_value[128];
@@ -227,7 +247,7 @@ void init_and_start_wifi(){
     esp_netif_init();
     esp_event_loop_create_default();
     esp_netif_create_default_wifi_sta();
-   
+    
     
     wifi_init_config_t conf = WIFI_INIT_CONFIG_DEFAULT();
     esp_wifi_init(&conf);
@@ -241,11 +261,11 @@ void init_and_start_wifi(){
         .sta = {
             
             #ifdef school_setup //Setting schools network
-            .ssid = "Jotakin",
-            .password = "ToomiHan0",
+                .ssid = "Jotakin",
+                .password = "ToomiHan0",
             #else
-            .ssid = wifi_ssid,
-            .password = wifi_password,
+                .ssid = wifi_ssid,
+                .password = wifi_password,
             #endif
         }
 
@@ -253,7 +273,7 @@ void init_and_start_wifi(){
 
     wifi_mode_t mode_conf = WIFI_MODE_STA; //Setting wifi mode
     esp_wifi_set_mode(mode_conf);
-    esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config_settings);
+    esp_wifi_set_config(WIFI_IF_STA, &wifi_config_settings);
 
     esp_wifi_start();
     esp_wifi_connect();
@@ -269,6 +289,13 @@ void app_main(void)
     
     //Start webserver begin
     httpd_handle_t server = start_webserver();
+
+    //Https server config
+    
+    httpd_ssl_config_t ssl_config = HTTPD_SSL_CONFIG_DEFAULT();
+    httpd_ssl_start(server,&ssl_config);
+    
+
     if (server) {
         register_uri_handlers(server);
     }
