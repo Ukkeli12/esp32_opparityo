@@ -18,6 +18,14 @@
 #include "esp_task_wdt.h"
 #include "mbedtls/base64.h"
 
+
+extern const unsigned char server_crt_start[] asm("_binary_server_crt_start");
+extern const unsigned char server_crt_end[]   asm("_binary_server_crt_end");
+
+extern const unsigned char server_key_start[] asm("_binary_server_key_start");
+extern const unsigned char server_key_end[]   asm("_binary_server_key_end");
+
+
 #define relay_port GPIO_NUM_32 //Port of reley that used in program
 #define wifi_ssid "Jotakin" //ssid for esp wifi
 #define wifi_password "ToomiHan0" //Password for esp wifi
@@ -188,15 +196,17 @@ esp_err_t led_get_handler(httpd_req_t *req) {
 
 
 static httpd_handle_t start_webserver(void) {
-    httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-    httpd_handle_t server = NULL;
-    /*if (httpd_start(&server, &config) == ESP_OK) {
-        return server;
-    }
-        return NULL;
-        */
+    httpd_ssl_config_t config = HTTPD_SSL_CONFIG_DEFAULT();
+    
+    config.servercert = server_crt_start;
+    config.servercert_len = server_crt_end - server_crt_start;
 
-    if (httpd_start(&server, &config) == ESP_OK) {
+    config.prvtkey_pem = server_key_start;
+    config.prvtkey_len = server_key_end - server_key_start;
+
+    httpd_handle_t server = NULL;
+
+    if (httpd_ssl_start(&server, &config) == ESP_OK) {
         httpd_uri_t root_uri = {
             .uri = "/",
             .method = HTTP_GET,
@@ -205,7 +215,7 @@ static httpd_handle_t start_webserver(void) {
         };
         httpd_register_uri_handler(server, &root_uri);
 
-    httpd_uri_t led_uri = {
+        httpd_uri_t led_uri = {
             .uri = "/led",
             .method = HTTP_GET,
             .handler = led_get_handler,
@@ -289,11 +299,6 @@ void app_main(void)
     
     //Start webserver begin
     httpd_handle_t server = start_webserver();
-
-    //Https server config
-    
-    httpd_ssl_config_t ssl_config = HTTPD_SSL_CONFIG_DEFAULT();
-    httpd_ssl_start(server,&ssl_config);
     
 
     if (server) {

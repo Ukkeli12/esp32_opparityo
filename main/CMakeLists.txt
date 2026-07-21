@@ -6,4 +6,5 @@ idf_component_register(SRCS "main.c"
                     REQUIRES esp_driver_gpio
                     REQUIRES esp_https_server)
                         
-                    
+target_add_binary_data(${COMPONENT_TARGET} server.crt TEXT) 
+target_add_binary_data(${COMPONENT_TARGET} server.key TEXT)

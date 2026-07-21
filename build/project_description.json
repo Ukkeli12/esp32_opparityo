@@ -1,7 +1,7 @@
 {
     "version":            "1.3",
     "project_name":       "wifi_rele_esp32",
-    "project_version":    "4157703-dirty",
+    "project_version":    "5c2c36e-dirty",
     "project_path":       "C:/Github_kloonit/esp32_opparityo",
     "idf_path":           "C:/esp/v6.0.2/esp-idf",
     "build_dir":          "C:/Github_kloonit/esp32_opparityo/build",
@@ -1765,7 +1765,7 @@
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "file": "C:/Github_kloonit/esp32_opparityo/build/esp-idf/main/libmain.a",
-            "sources": [ "C:/Github_kloonit/esp32_opparityo/main/main.c" ],
+            "sources": [ "C:/Github_kloonit/esp32_opparityo/main/main.c", "C:/Github_kloonit/esp32_opparityo/build/server.crt.S", "C:/Github_kloonit/esp32_opparityo/build/server.key.S" ],
             "include_dirs": []
         },
         "mbedtls": {

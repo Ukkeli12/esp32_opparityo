@@ -17,6 +17,8 @@ if("${CONFIG}" STREQUAL "" OR "${CONFIG}" STREQUAL "")
   "ldgen_libraries"
   "ldgen_libraries.in"
   "project_elf_src_esp32.c"
+  "server.crt.S"
+  "server.key.S"
   "wifi_rele_esp32.bin"
   "wifi_rele_esp32.map"
   "x509_crt_bundle.S"
